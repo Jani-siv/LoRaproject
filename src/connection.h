@@ -21,6 +21,7 @@ public:
 	virtual ~connection();
 	int testDevice();
 private:
+	bool ready = false;
 	char *devicename;
 	int serial_port=0;
 	struct termios tty;

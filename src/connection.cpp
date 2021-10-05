@@ -25,7 +25,43 @@ else
 	}
 	else
 	{
+		//clear parity
+		this->tty.c_cflag &= ~PARENB;
+		// num. stop bits clear stop bit field
+		this->tty.c_cflag &= ~CSTOPB;
+		//number of bit pre byte
+		this->tty.c_cflag |= CS8;
+		//flow control no control
+		this->tty.c_cflag &= ~CRTSCTS;
+		//CREAD and CLOCAL clocal disable modem-specific signal lines such as carrier detect
+		//Cread aloow us read data
+		this->tty.c_cflag |= CREAD | CLOCAL; //enable read and ignore ctrl lines (CLOCAL = 1)
+		// Canonical mode (disable)
+		this->tty.c_lflag &= ~ICANON;
+		//echo
+		this->tty.c_lflag &= ~ECHO; // Disable echo
+		this->tty.c_lflag &= ~ECHOE; // Disable erasure
+		this->tty.c_lflag &= ~ECHONL; // Disable new-line echo
+		//Disable Signal Chars
+		this->tty.c_lflag &= ~ISIG;
+		//Software Flow Control (disabled)
+		this->tty.c_iflag &= ~(IXON | IXOFF | IXANY);
+		//Disabling Special Handling Of Bytes On Receive
+		this->tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL);
+		//Output Modes
+		this->tty.c_oflag &= ~OPOST;
+		this->tty.c_oflag &= ~ONLCR;
+		//timing
+		this->tty.c_cc[VTIME] = 10;    // Wait for up to 1s (10 deciseconds), returning as soon as any data is received.
+		this->tty.c_cc[VMIN] = 0;
 
+		//baudrate
+		//in
+		cfsetispeed(&this->tty, B9600);
+		//out
+		cfsetospeed(&this->tty, B9600);
+		//all set
+		this->ready = true;
 	}
 
 }
