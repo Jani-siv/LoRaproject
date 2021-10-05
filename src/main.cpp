@@ -15,9 +15,13 @@
 //ToDo make module commands in own file
 //ToDo make master and slave select in main
 //ToDo create Github repo
+// device what we use for communication is /dev/serial1
+
 //============================================================================
 
 #include <iostream>
+//library for connection
+#include "connection.h"
 using namespace std;
 //
 
@@ -25,6 +29,13 @@ using namespace std;
 int
 main()
 {
+	//device settings
+	char device[] = "/dev/serial1";
+	char *deviceptr = nullptr;
+	deviceptr = device;
+
+	connection con(deviceptr);
+
 	//define uart connection between LoRa module and Raspberry pi
   cout << "sadf" << endl;
   return 0;
