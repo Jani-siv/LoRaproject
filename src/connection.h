@@ -15,16 +15,27 @@
 #include <errno.h> // Error integer and strerror() function
 #include <termios.h> // Contains POSIX terminal control definitions
 #include <unistd.h> // write(), read(), close()
+#include <stdio.h>
+#include <string.h> //memset
+//#include <sys/ioctl.h>
+//#include <linux/posix_types.h>
 class connection {
 public:
 	connection(char* devicename);
 	virtual ~connection();
 	int testDevice();
+	int sendMessage(char* message,int len);
+	int readMessage();
+	void showMessage();
+
 private:
 	bool ready = false;
 	char *devicename;
 	int serial_port=0;
 	struct termios tty;
+	char buffer[256];
+
+
 };
 
 #endif /* CONNECTION_H_ */

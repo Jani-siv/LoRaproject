@@ -30,11 +30,24 @@ int
 main()
 {
 	//device settings
-	char device[] = "/dev/serial1";
+	char device[] = "/dev/serial0";
 	char *deviceptr = nullptr;
+	//char message[] = "Hello world";
+	//char *messageptr = message;
 	deviceptr = device;
 
 	connection con(deviceptr);
+	int ret = -1;
+	while (ret < 0)
+	{
+		ret = con.readMessage();
+	}
+	if (ret >= 0)
+	{
+		con.showMessage();
+	}
+	//ret = con.sendMessage(messageptr,11);
+
 
 	//define uart connection between LoRa module and Raspberry pi
   cout << "sadf" << endl;
