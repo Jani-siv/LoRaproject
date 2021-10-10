@@ -22,7 +22,7 @@ void Lora::getMacaddress()
 	{
 		this->macAddress += this->buffer[i];
 	}
-	std::cout<<"mac address: "<<this->macAddress<<std::endl;
+	//std::cout<<"mac address: "<<this->macAddress<<std::endl;
 }
 
 void Lora::macCommands(std::string com)
@@ -30,7 +30,7 @@ void Lora::macCommands(std::string com)
 std::string pause ="pause";
 if (com == pause)
 {
-	std::cout<<"setting mac pause"<<std::endl;
+	//std::cout<<"setting mac pause"<<std::endl;
 	char pause[] = "mac pause\r\n";
 	char *pauseptr = pause;
 	this->sendMessage(pauseptr,sizeof(pause));
@@ -53,7 +53,7 @@ int Lora::loraInit()
 	char *pauseptr = pause;
 	char freq[] = "radio set freq 868000000\r\n";
 	char * freqptr = freq;
-	char pwr[] = "radio set pwr -3\r\n";
+	char pwr[] = "radio set pwr 14\r\n"; //-3
 	char *pwrptr = pwr;
 	char mode[] = "radio set mod lora\r\n";
 	char *modeptr = mode;
@@ -121,7 +121,7 @@ return ans;
 void Lora::loraReceive()
 {
 //wait data 5 seconds
-	std::cout<<"start listening"<<std::endl;
+	//std::cout<<"start listening"<<std::endl;
 	char mes[] ="radio set wdt 5000\r\n";
 	char * mesptr = mes;
 	char readmes[] ="radio rx 0\r\n"; //contiues mode
@@ -155,7 +155,7 @@ void Lora::loraReceive()
 			{
 				mes += this->buffer[i];
 			}
-			std::cout<<"message from other side: "<<mes<<std::endl;
+		//	std::cout<<"message from other side: "<<mes<<std::endl;
 			if (mes[0] != '*')
 				{
 				ans = -1;
@@ -174,9 +174,9 @@ void Lora::loraReceive()
 		}
 	}
 	this->macCommands("resume");
-	std::cout<<"from receiver"<<std::endl;
+//	std::cout<<"from receiver"<<std::endl;
 	//this->readMessage();
-	this->showMessage();
+	//this->showMessage();
 	/*
 			deviceSend(port, "radio set wdt 5000")
 			  print"Start listening"try:
@@ -193,7 +193,7 @@ void Lora::loraReceive()
 int Lora::checkBuffer(std::string mac)
 {
 	this->readMessage();
-	std::cout<<buffer<<std::endl;
+//	std::cout<<buffer<<std::endl;
 	for (unsigned int i = 0; i < mac.size(); i++)
 	{
 		if (mac[i] != this->buffer[i])
@@ -212,9 +212,9 @@ void Lora::sleep100ms()
 		this->sendMessage(mesptr,sizeof(message));
 		this->readMessage();
 		char * ans = this->getMessage();
-		std::cout<<"answer: "<<ans<<std::endl;
+//		std::cout<<"answer: "<<ans<<std::endl;
 		int test = this->checkAnswer(ans);
-		std::cout<<"check number: "<<test<<std::endl;
+//		std::cout<<"check number: "<<test<<std::endl;
 		ans=nullptr;
 }
 void Lora::loraSend(std::string message)
@@ -234,8 +234,8 @@ void Lora::loraSend(std::string message)
 	{
 
 	ans = this->initCommands(messptr,sizeof(mess));
-	std::cout<<"message"<<ans<<std::endl;
-	usleep(2000000);
+	//std::cout<<"message"<<ans<<std::endl;
+	usleep(2000);
 	}
 	this->macCommands("resume");
 /*
@@ -253,18 +253,18 @@ int Lora::checkAnswer(char *answer)
 	char initMessage[] = "RN2483 1.0.1";
 	int newline = 0, endmessage = 0;
 	bool setNewline = false, setEnd=false;
-	std::cout<<"answer from function: "<<answer<<std::endl;
+//	std::cout<<"answer from function: "<<answer<<std::endl;
 	for (int i = 0; i < BUFFER_SIZE; i++)
 	{
 		if ((answer[0] == 111 && setNewline == false) || (answer[0] == 105 && setNewline == false) || (answer[0] == 82 && setNewline == false) || (answer[0] == 114 && setNewline == false))
 		{
-			std::cout<<"skip newline in: "<<i<<std::endl;
+		//	std::cout<<"skip newline in: "<<i<<std::endl;
 			setNewline =true;
 			newline= i;
-			std::cout<<"answer 4"<<answer[4]<<std::endl;
+		//	std::cout<<"answer 4"<<answer[4]<<std::endl;
 			if (answer[4] == 114)
 			{
-				std::cout<<"setting +4"<<std::endl;
+		//		std::cout<<"setting +4"<<std::endl;
 				newline = i+4;
 			}
 		}
@@ -275,7 +275,8 @@ int Lora::checkAnswer(char *answer)
 		}
 		if (answer[i] == 42 && setEnd == false && setNewline == true)
 		{
-			std::cout<<"end"<<i<<std::endl;
+			usleep(2000);
+		//	std::cout<<"end"<<i<<std::endl;
 			endmessage=i-2;
 			setEnd = true;
 		}
@@ -303,7 +304,7 @@ int Lora::checkAnswer(char *answer)
 		j++;
 	}
 
-std::cout<<"answer found: "<<convertedAnswer<<std::endl;
+//std::cout<<"answer found: "<<convertedAnswer<<std::endl;
 
 
 		this->commands.answerit = this->commands.answers.find(convertedAnswer);

@@ -47,6 +47,7 @@ std::string mes ="12345";
 				std::cout<<"selected transmitter"<<std::endl;
 				lora.loraInit();
 				usleep(2000);
+				std::cout<<"start sending message to quit ctrl + c"<<std::endl;
 				while(1)
 				{
 				lora.loraSend(mes);

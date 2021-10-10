@@ -97,7 +97,7 @@ int connection::sendMessage(char* message, int len)
 	if (this->ready == true)
 	{
 		int ret = write(this->serial_port,message,len);
-		std::cout<<"message: "<<message<<std::endl;
+		//std::cout<<"message: "<<message<<std::endl;
 		if (ret < 0)
 		{
 			std::cerr<<"Error sending message: "<<message<<std::endl;
@@ -134,13 +134,7 @@ int connection::checkMessage(char *message, int len)
 		std::cout<<"error length"<<std::endl;
 		return -1;
 	}
-	for (int i = 0; i < len; i++ )
-	{
 
-			std::cout<<i<<" "<<int(this->buffer[i])<<this->buffer[i]<<" "<<int(message[i])<<message[i]<<std::endl;
-
-
-	}
 return 0;
 }
 
