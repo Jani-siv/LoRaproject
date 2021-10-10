@@ -33,12 +33,56 @@ int
 main(int argc, char *argv[])
 {
 	//device settings
-std::string mes ="123456789";
+std::string mes ="12345";
 	Lora lora;
-	lora.loraInit();
-	usleep(2000);
-	lora.loraSend(mes);
-	lora.sleep100ms();
+
+	if (argc > 1)
+		{
+		int answer = atoi(argv[1]);
+		std::cout<<"selected: "<<answer<<std::endl;
+
+		switch(answer)
+		{
+			case 0:
+				std::cout<<"selected transmitter"<<std::endl;
+				lora.loraInit();
+				usleep(2000);
+				while(1)
+				{
+				lora.loraSend(mes);
+				}
+				break;
+
+			case 1:
+				std::cout<<"selected receiver"<<std::endl;
+				lora.loraInit();
+				usleep(2000);
+
+				lora.loraReceive();
+				std::cout<<"message from other device:"<<std::endl;
+				std::cout<<lora.rmessage<<std::endl;
+
+				std::cout<<"message from other device:"<<std::endl;
+				std::cout<<lora.rmessage<<std::endl;
+				break;
+
+			default:
+			std::cout<<"***LORA PROJECT****"<<std::endl;
+			std::cout<<"use 0 to transmitter"<<std::endl;
+			std::cout<<"use 1 to receiver"<<std::endl;
+			return 0;
+				break;
+		}
+
+
+		}
+	else
+	{
+		std::cout<<"***LORA PROJECT****"<<std::endl;
+		std::cout<<"use 0 to transmitter"<<std::endl;
+		std::cout<<"use 1 to receiver"<<std::endl;
+	}
+	//lora.sleep100ms();
 
 
   return 0;

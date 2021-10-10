@@ -15,7 +15,34 @@ this->initConnection(this->dev);
 Lora::~Lora() {
 	// TODO Auto-generated destructor stub
 }
+void Lora::getMacaddress()
+{
+	this->readMessage();
+	for (int i=5; i < 15; i++)
+	{
+		this->macAddress += this->buffer[i];
+	}
+	std::cout<<"mac address: "<<this->macAddress<<std::endl;
+}
 
+void Lora::macCommands(std::string com)
+{
+std::string pause ="pause";
+if (com == pause)
+{
+	std::cout<<"setting mac pause"<<std::endl;
+	char pause[] = "mac pause\r\n";
+	char *pauseptr = pause;
+	this->sendMessage(pauseptr,sizeof(pause));
+
+}
+else
+{
+	char resum[] = "mac resume\r\n";
+	char *resumptr = resum;
+	this->initCommands(resumptr,sizeof(resum));
+}
+}
 int Lora::loraInit()
 {
 	int ans = 0;
@@ -58,6 +85,7 @@ int Lora::loraInit()
 		{
 		this->sendMessage(pauseptr,sizeof(pause));
 		usleep(2000);
+		this->getMacaddress();
 		once = true;
 		}
 		//freq
@@ -92,9 +120,90 @@ return ans;
 }
 void Lora::loraReceive()
 {
+//wait data 5 seconds
+	std::cout<<"start listening"<<std::endl;
+	char mes[] ="radio set wdt 5000\r\n";
+	char * mesptr = mes;
+	char readmes[] ="radio rx 0\r\n"; //contiues mode
+	char * readmesptr = readmes;
 
 
+	int ans = -1;
+	while (ans != 0)
+	{
+	ans =this->initCommands(mesptr,sizeof(mes));
+	}
+	ans = -1;
+	this->macCommands("pause");
+	while (ans != 0)
+	{
+		ans = this->initCommands(readmesptr,sizeof(readmes));
+	}
+	while (ans != 2)
+	{
+		ans = this->initCommands(readmesptr,sizeof(readmes));
+		if (ans == 3)
+		{
+			usleep(20000);
+		}
+		this->macCommands("pause");
+		int ans = this->checkBuffer(this->macAddress);
+		if (ans == 0)
+		{
+			std::string mes;
+			for (int i = this->macAddress.size()+2; i < BUFFER_SIZE; i++)
+			{
+				mes += this->buffer[i];
+			}
+			std::cout<<"message from other side: "<<mes<<std::endl;
+			if (mes[0] != '*')
+				{
+				ans = -1;
+				for (int i=0; i < mes.size(); i++)
+				{
+					if (mes[i] != '*' && mes[i] != '\n'){
+					this->rmessage += mes[i];
+					}
+				}
+				if (this->rmessage != "radio_err")
+				{
+					break;
+				}
+				}
+
+		}
+	}
+	this->macCommands("resume");
+	std::cout<<"from receiver"<<std::endl;
+	//this->readMessage();
+	this->showMessage();
+	/*
+			deviceSend(port, "radio set wdt 5000")
+			  print"Start listening"try:
+			     whileTrue:
+			       ans = deviceSend(port, "radio rx 0")
+			       if ans == "ok":
+			         r = port.readline().strip()
+			         if r != "err"and len(r) > 0:
+			           print"> " + r
+				 # We need time to prepare RN2483 for the next receiving
+			         sleep(0.1)
+*/
 }
+int Lora::checkBuffer(std::string mac)
+{
+	this->readMessage();
+	std::cout<<buffer<<std::endl;
+	for (unsigned int i = 0; i < mac.size(); i++)
+	{
+		if (mac[i] != this->buffer[i])
+		{
+			return -1;
+		}
+	}
+	return 0;
+}
+
 void Lora::sleep100ms()
 {
 	char message[] = "sys sleep 100\r\n";
@@ -119,11 +228,16 @@ void Lora::loraSend(std::string message)
 	{
 		mess[i] = mes[i];
 	}
+	this->macCommands("pause");
+
 	while (ans != 0)
 	{
+
 	ans = this->initCommands(messptr,sizeof(mess));
 	std::cout<<"message"<<ans<<std::endl;
+	usleep(2000000);
 	}
+	this->macCommands("resume");
 /*
 	  deviceSend(port, "radio tx 0123456789")
 	  sleep(0.5)
@@ -144,9 +258,15 @@ int Lora::checkAnswer(char *answer)
 	{
 		if ((answer[0] == 111 && setNewline == false) || (answer[0] == 105 && setNewline == false) || (answer[0] == 82 && setNewline == false) || (answer[0] == 114 && setNewline == false))
 		{
-			std::cout<<"skip newline"<<std::endl;
+			std::cout<<"skip newline in: "<<i<<std::endl;
 			setNewline =true;
 			newline= i;
+			std::cout<<"answer 4"<<answer[4]<<std::endl;
+			if (answer[4] == 114)
+			{
+				std::cout<<"setting +4"<<std::endl;
+				newline = i+4;
+			}
 		}
 		if (answer[i] == '\n' && setNewline == false)
 		{
@@ -174,6 +294,7 @@ int Lora::checkAnswer(char *answer)
 		return 1;
 	}
 	else {
+
 		char convertedAnswer[endmessage-newline];
 		int j = 0;
 	for (int i = newline; i < endmessage; i++)
@@ -181,8 +302,12 @@ int Lora::checkAnswer(char *answer)
 		convertedAnswer[j] = answer[i];
 		j++;
 	}
+
 std::cout<<"answer found: "<<convertedAnswer<<std::endl;
-	this->commands.answerit = this->commands.answers.find(convertedAnswer);
+
+
+		this->commands.answerit = this->commands.answers.find(convertedAnswer);
+
 if (this->commands.answerit == this->commands.answers.end())
 {
 	return -1;

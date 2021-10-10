@@ -22,11 +22,16 @@ public:
 	void loraReceive();
 	void loraSend(std::string message);
 	void sleep100ms();
+	std::string rmessage ="";
 	virtual ~Lora();
 private:
+	int checkBuffer(std::string mac);
+	void getMacaddress();
+	std::string macAddress;
 	bool init = false;
 	int checkAnswer(char *answer);
 	int initCommands(char* messages, int size);
+	void macCommands(std::string com);
 	connection con();
 
 	loraconnect commands;

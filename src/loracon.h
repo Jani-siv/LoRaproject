@@ -20,6 +20,8 @@ std::map<std::string,std::string> commands = {
 std::map<std::string,int> answers = {
 		{"ok",0},
 		{"radio_tx_ok",0},
+		{"radio_rx",2},
+		{"busy",3},
 		{"invalid_param",-1},
 		{"radio_err",-1},
 		{"Requested Information",-2},

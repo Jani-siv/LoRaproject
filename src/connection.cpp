@@ -143,6 +143,7 @@ int connection::checkMessage(char *message, int len)
 	}
 return 0;
 }
+
 void connection::showMessage()
 {
 	char* mes = this->buffer;

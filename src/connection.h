@@ -17,8 +17,8 @@
 #include <unistd.h> // write(), read(), close()
 #include <stdio.h>
 #include <string.h> //memset
-
-#define BUFFER_SIZE 25
+//25 working
+#define BUFFER_SIZE 30
 //#include <sys/ioctl.h>
 //#include <linux/posix_types.h>
 class connection {
@@ -26,20 +26,18 @@ public:
 	connection();
 	virtual ~connection();
 	int initConnection(char* devicename);
-
-
-
+	std::string macAddress;
 private:
-
 	bool ready = false;
 	char *devicename = nullptr;
 	int serial_port=0;
 	struct termios tty;
-	char buffer[BUFFER_SIZE];
+
 	int testDevice();
 
 protected:
 	char * getMessage();
+	char buffer[BUFFER_SIZE];
 	int sendMessage(char* message,int len);
 	int readMessage();
 	void showMessage();
