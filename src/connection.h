@@ -17,24 +17,33 @@
 #include <unistd.h> // write(), read(), close()
 #include <stdio.h>
 #include <string.h> //memset
+
+#define BUFFER_SIZE 25
 //#include <sys/ioctl.h>
 //#include <linux/posix_types.h>
 class connection {
 public:
-	connection(char* devicename);
+	connection();
 	virtual ~connection();
+	int initConnection(char* devicename);
+
+
+
+private:
+
+	bool ready = false;
+	char *devicename = nullptr;
+	int serial_port=0;
+	struct termios tty;
+	char buffer[BUFFER_SIZE];
 	int testDevice();
+
+protected:
+	char * getMessage();
 	int sendMessage(char* message,int len);
 	int readMessage();
 	void showMessage();
-
-private:
-	bool ready = false;
-	char *devicename;
-	int serial_port=0;
-	struct termios tty;
-	char buffer[256];
-
+	int checkMessage(char *message, int len);
 
 };
 

@@ -21,35 +21,25 @@
 
 #include <iostream>
 //library for connection
-#include "connection.h"
+
+#include "Lora.h"
+#include <string>
 using namespace std;
+
 //
 
 
 int
-main()
+main(int argc, char *argv[])
 {
 	//device settings
-	char device[] = "/dev/serial0";
-	char *deviceptr = nullptr;
-	//char message[] = "Hello world";
-	//char *messageptr = message;
-	deviceptr = device;
-
-	connection con(deviceptr);
-	int ret = -1;
-	while (ret < 0)
-	{
-		ret = con.readMessage();
-	}
-	if (ret >= 0)
-	{
-		con.showMessage();
-	}
-	//ret = con.sendMessage(messageptr,11);
+std::string mes ="123456789";
+	Lora lora;
+	lora.loraInit();
+	usleep(2000);
+	lora.loraSend(mes);
+	lora.sleep100ms();
 
 
-	//define uart connection between LoRa module and Raspberry pi
-  cout << "sadf" << endl;
   return 0;
 }
