@@ -15,17 +15,76 @@
 //ToDo make module commands in own file
 //ToDo make master and slave select in main
 //ToDo create Github repo
+// device what we use for communication is /dev/serial1
+
 //============================================================================
 
 #include <iostream>
+//library for connection
+
+#include "Lora.h"
+#include <string>
 using namespace std;
+
 //
 
 
 int
-main()
+main(int argc, char *argv[])
 {
-	//define uart connection between LoRa module and Raspberry pi
-  cout << "sadf" << endl;
+	//device settings
+std::string mes ="12345";
+	Lora lora;
+
+	if (argc > 1)
+		{
+		int answer = atoi(argv[1]);
+		std::cout<<"selected: "<<answer<<std::endl;
+
+		switch(answer)
+		{
+			case 0:
+				std::cout<<"selected transmitter"<<std::endl;
+				lora.loraInit();
+				usleep(2000);
+				std::cout<<"start sending message to quit ctrl + c"<<std::endl;
+				while(1)
+				{
+				lora.loraSend(mes);
+				}
+				break;
+
+			case 1:
+				std::cout<<"selected receiver"<<std::endl;
+				lora.loraInit();
+				usleep(2000);
+
+				lora.loraReceive();
+				std::cout<<"message from other device:"<<std::endl;
+				std::cout<<lora.rmessage<<std::endl;
+
+				std::cout<<"message from other device:"<<std::endl;
+				std::cout<<lora.rmessage<<std::endl;
+				break;
+
+			default:
+			std::cout<<"***LORA PROJECT****"<<std::endl;
+			std::cout<<"use 0 to transmitter"<<std::endl;
+			std::cout<<"use 1 to receiver"<<std::endl;
+			return 0;
+				break;
+		}
+
+
+		}
+	else
+	{
+		std::cout<<"***LORA PROJECT****"<<std::endl;
+		std::cout<<"use 0 to transmitter"<<std::endl;
+		std::cout<<"use 1 to receiver"<<std::endl;
+	}
+	//lora.sleep100ms();
+
+
   return 0;
 }
